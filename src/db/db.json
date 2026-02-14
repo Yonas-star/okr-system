@@ -1,0 +1,718 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "gd@okr.com",
+      "password": "gd123",
+      "name": "Dr. James Wilson",
+      "role": "general_director",
+      "title": "General Director",
+      "avatar": null,
+      "department": "Executive Office",
+      "level": 5,
+      "reportsTo": null
+    },
+    {
+      "id": 2,
+      "email": "cto@okr.com",
+      "password": "cto123",
+      "name": "Sarah Chen",
+      "role": "director",
+      "title": "Chief Technology Officer",
+      "avatar": null,
+      "department": "Technology Directorate",
+      "directorate": "tech",
+      "level": 4,
+      "reportsTo": 1
+    },
+    {
+      "id": 3,
+      "email": "chro@okr.com",
+      "password": "chro123",
+      "name": "Michael Johnson",
+      "role": "director",
+      "title": "Chief Human Resources Officer",
+      "avatar": null,
+      "department": "HR Directorate",
+      "directorate": "hr",
+      "level": 4,
+      "reportsTo": 1
+    },
+    {
+      "id": 4,
+      "email": "cmo@okr.com",
+      "password": "cmo123",
+      "name": "Emma Davis",
+      "role": "director",
+      "title": "Chief Marketing Officer",
+      "avatar": null,
+      "department": "Marketing Directorate",
+      "directorate": "marketing",
+      "level": 4,
+      "reportsTo": 1
+    },
+    {
+      "id": 5,
+      "email": "cfo@okr.com",
+      "password": "cfo123",
+      "name": "Robert Brown",
+      "role": "director",
+      "title": "Chief Financial Officer",
+      "avatar": null,
+      "department": "Finance Directorate",
+      "directorate": "finance",
+      "level": 4,
+      "reportsTo": 1
+    },
+    {
+      "id": 6,
+      "email": "tech-head@okr.com",
+      "password": "head123",
+      "name": "Alex Rivera",
+      "role": "division_head",
+      "title": "Engineering Division Head",
+      "avatar": null,
+      "department": "Engineering Division",
+      "directorate": "tech",
+      "division": "engineering",
+      "level": 3,
+      "reportsTo": 2
+    },
+    {
+      "id": 7,
+      "email": "product-head@okr.com",
+      "password": "head123",
+      "name": "Lisa Wang",
+      "role": "division_head",
+      "title": "Product Division Head",
+      "avatar": null,
+      "department": "Product Division",
+      "directorate": "tech",
+      "division": "product",
+      "level": 3,
+      "reportsTo": 2
+    },
+    {
+      "id": 8,
+      "email": "hr-head@okr.com",
+      "password": "head123",
+      "name": "Jennifer Lee",
+      "role": "division_head",
+      "title": "Talent Acquisition Head",
+      "avatar": null,
+      "department": "Talent Division",
+      "directorate": "hr",
+      "division": "talent",
+      "level": 3,
+      "reportsTo": 3
+    },
+    {
+      "id": 9,
+      "email": "marketing-head@okr.com",
+      "password": "head123",
+      "name": "David Kim",
+      "role": "division_head",
+      "title": "Digital Marketing Head",
+      "avatar": null,
+      "department": "Digital Division",
+      "directorate": "marketing",
+      "division": "digital",
+      "level": 3,
+      "reportsTo": 4
+    },
+    {
+      "id": 10,
+      "email": "dev1@okr.com",
+      "password": "emp123",
+      "name": "John Smith",
+      "role": "employee",
+      "title": "Senior Developer",
+      "avatar": null,
+      "department": "Engineering Division",
+      "directorate": "tech",
+      "division": "engineering",
+      "team": "backend",
+      "level": 1,
+      "reportsTo": 6
+    },
+    {
+      "id": 11,
+      "email": "dev2@okr.com",
+      "password": "emp123",
+      "name": "Maria Garcia",
+      "role": "employee",
+      "title": "Frontend Developer",
+      "avatar": null,
+      "department": "Engineering Division",
+      "directorate": "tech",
+      "division": "engineering",
+      "team": "frontend",
+      "level": 1,
+      "reportsTo": 6
+    },
+    {
+      "id": 12,
+      "email": "designer@okr.com",
+      "password": "emp123",
+      "name": "Anna Taylor",
+      "role": "employee",
+      "title": "UX Designer",
+      "avatar": null,
+      "department": "Product Division",
+      "directorate": "tech",
+      "division": "product",
+      "team": "design",
+      "level": 1,
+      "reportsTo": 7
+    }
+  ],
+  "organizational_plans": [
+    {
+      "id": 1,
+      "year": 2024,
+      "quarter": "Q1",
+      "mission": "To revolutionize enterprise software through AI-driven solutions",
+      "vision": "To be the global leader in intelligent OKR platforms",
+      "strategic_objectives": [
+        {
+          "id": 101,
+          "title": "Achieve 40% Market Share Growth",
+          "description": "Expand market presence through innovative products",
+          "weight": 30,
+          "progress": 45,
+          "status": "on-track",
+          "thematic": "Market Expansion"
+        },
+        {
+          "id": 102,
+          "title": "Launch AI-Powered Analytics Platform",
+          "description": "Develop and deploy next-gen analytics solution",
+          "weight": 35,
+          "progress": 60,
+          "status": "on-track",
+          "thematic": "Digital Transformation"
+        },
+        {
+          "id": 103,
+          "title": "Achieve 95% Customer Satisfaction",
+          "description": "Enhance customer experience and support",
+          "weight": 20,
+          "progress": 55,
+          "status": "at-risk",
+          "thematic": "Customer Excellence"
+        },
+        {
+          "id": 104,
+          "title": "Reduce Carbon Footprint by 30%",
+          "description": "Implement sustainable practices",
+          "weight": 15,
+          "progress": 35,
+          "status": "behind",
+          "thematic": "Sustainability"
+        }
+      ],
+      "thematics": [
+        {
+          "id": 201,
+          "name": "Market Expansion",
+          "budget": "$3.2M",
+          "priority": "high",
+          "directorates": ["tech", "marketing", "sales"]
+        },
+        {
+          "id": 202,
+          "name": "Digital Transformation",
+          "budget": "$4.5M",
+          "priority": "high",
+          "directorates": ["tech", "finance"]
+        },
+        {
+          "id": 203,
+          "name": "Customer Excellence",
+          "budget": "$2.1M",
+          "priority": "medium",
+          "directorates": ["tech", "marketing", "hr"]
+        },
+        {
+          "id": 204,
+          "name": "Sustainability",
+          "budget": "$1.8M",
+          "priority": "medium",
+          "directorates": ["finance", "hr"]
+        }
+      ],
+      "createdBy": 1,
+      "createdAt": "2024-01-01",
+      "status": "active"
+    }
+  ],
+  "directorate_plans": [
+    {
+      "id": 1,
+      "directorateId": 2,
+      "directorate": "tech",
+      "year": 2024,
+      "quarter": "Q1",
+      "alignedThematics": [201, 202, 203],
+      "objectives": [
+        {
+          "id": 301,
+          "title": "Develop AI Analytics MVP",
+          "alignedTo": 102,
+          "progress": 65,
+          "status": "on-track",
+          "weight": 40,
+          "keyResults": [
+            {
+              "id": 3011,
+              "title": "Complete data pipeline architecture",
+              "progress": 80,
+              "status": "on-track",
+              "weight": 30,
+              "assignee": 6
+            },
+            {
+              "id": 3012,
+              "title": "Train ML models on customer data",
+              "progress": 55,
+              "status": "at-risk",
+              "weight": 40,
+              "assignee": 6
+            },
+            {
+              "id": 3013,
+              "title": "Deploy beta version to 10 test clients",
+              "progress": 40,
+              "status": "behind",
+              "weight": 30,
+              "assignee": 7
+            }
+          ]
+        },
+        {
+          "id": 302,
+          "title": "Improve Platform Performance",
+          "alignedTo": 102,
+          "progress": 70,
+          "status": "on-track",
+          "weight": 30,
+          "keyResults": [
+            {
+              "id": 3021,
+              "title": "Reduce API latency by 50%",
+              "progress": 75,
+              "status": "on-track",
+              "weight": 35,
+              "assignee": 6
+            },
+            {
+              "id": 3022,
+              "title": "Achieve 99.99% uptime",
+              "progress": 85,
+              "status": "on-track",
+              "weight": 35,
+              "assignee": 6
+            },
+            {
+              "id": 3023,
+              "title": "Optimize database queries",
+              "progress": 50,
+              "status": "at-risk",
+              "weight": 30,
+              "assignee": 6
+            }
+          ]
+        }
+      ],
+      "reports": [
+        {
+          "id": 401,
+          "title": "Q1 Progress Report",
+          "status": "submitted",
+          "submittedAt": "2024-03-15",
+          "submittedTo": 1,
+          "content": "Detailed progress on AI platform development...",
+          "attachments": []
+        }
+      ],
+      "createdBy": 2,
+      "status": "active"
+    },
+    {
+      "id": 2,
+      "directorateId": 3,
+      "directorate": "hr",
+      "year": 2024,
+      "quarter": "Q1",
+      "alignedThematics": [203, 204],
+      "objectives": [
+        {
+          "id": 401,
+          "title": "Improve Employee Engagement",
+          "alignedTo": 103,
+          "progress": 45,
+          "status": "at-risk",
+          "weight": 50,
+          "keyResults": [
+            {
+              "id": 4011,
+              "title": "Implement new feedback system",
+              "progress": 60,
+              "status": "on-track",
+              "weight": 40,
+              "assignee": 8
+            },
+            {
+              "id": 4012,
+              "title": "Achieve 85% engagement score",
+              "progress": 30,
+              "status": "behind",
+              "weight": 60,
+              "assignee": 8
+            }
+          ]
+        }
+      ],
+      "reports": [],
+      "createdBy": 3,
+      "status": "active"
+    }
+  ],
+  "division_plans": [
+    {
+      "id": 1,
+      "divisionId": 1,
+      "division": "engineering",
+      "directorate": "tech",
+      "year": 2024,
+      "quarter": "Q1",
+      "alignedToDirectorateObjective": 301,
+      "objectives": [
+        {
+          "id": 501,
+          "title": "Build Scalable Data Pipeline",
+          "progress": 80,
+          "status": "on-track",
+          "weight": 40,
+          "keyResults": [
+            {
+              "id": 5011,
+              "title": "Design ETL architecture",
+              "progress": 100,
+              "status": "completed",
+              "weight": 25,
+              "assignee": 10,
+              "completedAt": "2024-02-15"
+            },
+            {
+              "id": 5012,
+              "title": "Implement data processing framework",
+              "progress": 75,
+              "status": "on-track",
+              "weight": 35,
+              "assignee": 10
+            },
+            {
+              "id": 5013,
+              "title": "Set up monitoring and alerting",
+              "progress": 60,
+              "status": "on-track",
+              "weight": 40,
+              "assignee": 10
+            }
+          ],
+          "tasks": [
+            {
+              "id": 5001,
+              "title": "Research streaming platforms",
+              "status": "completed",
+              "priority": "medium",
+              "weight": 5,
+              "assignedTo": 10,
+              "dueDate": "2024-02-01",
+              "completedAt": "2024-01-30"
+            },
+            {
+              "id": 5002,
+              "title": "Prototype Kafka implementation",
+              "status": "in-progress",
+              "priority": "high",
+              "weight": 15,
+              "assignedTo": 10,
+              "dueDate": "2024-03-20",
+              "progress": 70
+            }
+          ]
+        },
+        {
+          "id": 502,
+          "title": "Optimize API Performance",
+          "progress": 60,
+          "status": "on-track",
+          "weight": 35,
+          "keyResults": [
+            {
+              "id": 5021,
+              "title": "Implement caching layer",
+              "progress": 80,
+              "status": "on-track",
+              "weight": 40,
+              "assignee": 11
+            },
+            {
+              "id": 5022,
+              "title": "Optimize database indexes",
+              "progress": 50,
+              "status": "at-risk",
+              "weight": 35,
+              "assignee": 11
+            },
+            {
+              "id": 5023,
+              "title": "Reduce payload size by 40%",
+              "progress": 45,
+              "status": "at-risk",
+              "weight": 25,
+              "assignee": 11
+            }
+          ],
+          "tasks": [
+            {
+              "id": 5003,
+              "title": "Implement Redis caching",
+              "status": "in-progress",
+              "priority": "high",
+              "weight": 20,
+              "assignedTo": 11,
+              "dueDate": "2024-03-25",
+              "progress": 60
+            }
+          ]
+        }
+      ],
+      "reports": [
+        {
+          "id": 601,
+          "title": "Sprint 8 Review",
+          "status": "submitted",
+          "submittedAt": "2024-03-14",
+          "submittedTo": 2,
+          "content": "Completed data pipeline design, API optimization ongoing...",
+          "attachments": ["sprint8_report.pdf"]
+        }
+      ],
+      "createdBy": 6,
+      "status": "active"
+    }
+  ],
+  "employee_plans": [
+    {
+      "id": 1,
+      "employeeId": 10,
+      "name": "John Smith",
+      "year": 2024,
+      "quarter": "Q1",
+      "alignedToDivisionObjective": 501,
+      "keyResults": [
+        {
+          "id": 701,
+          "title": "Implement Kafka streaming pipeline",
+          "progress": 70,
+          "status": "on-track",
+          "weight": 40,
+          "alignedTo": 5012
+        },
+        {
+          "id": 702,
+          "title": "Set up Grafana dashboards",
+          "progress": 60,
+          "status": "on-track",
+          "weight": 30,
+          "alignedTo": 5013
+        },
+        {
+          "id": 703,
+          "title": "Document data pipeline architecture",
+          "progress": 40,
+          "status": "behind",
+          "weight": 20,
+          "alignedTo": 5011
+        }
+      ],
+      "tasks": [
+        {
+          "id": 8001,
+          "title": "Kafka cluster setup",
+          "status": "completed",
+          "priority": "high",
+          "weight": 15,
+          "dueDate": "2024-03-01",
+          "completedAt": "2024-02-28"
+        },
+        {
+          "id": 8002,
+          "title": "Implement stream processors",
+          "status": "in-progress",
+          "priority": "high",
+          "weight": 25,
+          "dueDate": "2024-03-30",
+          "progress": 60
+        }
+      ],
+      "bsc": {
+        "id": 1,
+        "evaluator": 6,
+        "evaluatedAt": null,
+        "metrics": {
+          "quality": 0,
+          "productivity": 0,
+          "collaboration": 0,
+          "innovation": 0
+        },
+        "comments": null,
+        "status": "pending"
+      },
+      "reports": [
+        {
+          "id": 9001,
+          "title": "Weekly Progress Report",
+          "status": "submitted",
+          "submittedAt": "2024-03-15",
+          "submittedTo": 6,
+          "content": "Completed Kafka setup, started stream processing..."
+        }
+      ],
+      "createdBy": 10,
+      "status": "active"
+    },
+    {
+      "id": 2,
+      "employeeId": 11,
+      "name": "Maria Garcia",
+      "year": 2024,
+      "quarter": "Q1",
+      "alignedToDivisionObjective": 502,
+      "keyResults": [
+        {
+          "id": 801,
+          "title": "Implement Redis caching",
+          "progress": 80,
+          "status": "on-track",
+          "weight": 45,
+          "alignedTo": 5021
+        },
+        {
+          "id": 802,
+          "title": "Optimize API endpoints",
+          "progress": 50,
+          "status": "at-risk",
+          "weight": 35,
+          "alignedTo": 5023
+        }
+      ],
+      "tasks": [
+        {
+          "id": 8003,
+          "title": "Redis configuration",
+          "status": "completed",
+          "priority": "high",
+          "weight": 20,
+          "dueDate": "2024-03-10",
+          "completedAt": "2024-03-08"
+        },
+        {
+          "id": 8004,
+          "title": "Implement cache strategies",
+          "status": "in-progress",
+          "priority": "high",
+          "weight": 30,
+          "dueDate": "2024-03-25",
+          "progress": 70
+        }
+      ],
+      "bsc": {
+        "id": 2,
+        "evaluator": 6,
+        "evaluatedAt": null,
+        "metrics": {
+          "quality": 0,
+          "productivity": 0,
+          "collaboration": 0,
+          "innovation": 0
+        },
+        "comments": null,
+        "status": "pending"
+      },
+      "reports": [],
+      "createdBy": 11,
+      "status": "active"
+    }
+  ],
+  "reports": [
+    {
+      "id": 1001,
+      "title": "Q1 Directorate Progress Report - Tech",
+      "type": "directorate_report",
+      "from": 2,
+      "to": 1,
+      "status": "submitted",
+      "content": "AI platform development on track, performance improvements achieved...",
+      "submittedAt": "2024-03-15",
+      "quarter": "Q1",
+      "year": 2024
+    },
+    {
+      "id": 1002,
+      "title": "Engineering Division Sprint Report",
+      "type": "division_report",
+      "from": 6,
+      "to": 2,
+      "status": "submitted",
+      "content": "Completed data pipeline architecture, API optimization in progress...",
+      "submittedAt": "2024-03-14",
+      "quarter": "Q1",
+      "year": 2024
+    },
+    {
+      "id": 1003,
+      "title": "John Smith - Weekly Progress",
+      "type": "employee_report",
+      "from": 10,
+      "to": 6,
+      "status": "submitted",
+      "content": "Kafka implementation progress, monitoring dashboards setup...",
+      "submittedAt": "2024-03-15",
+      "quarter": "Q1",
+      "year": 2024
+    }
+  ],
+  "notifications": [
+    {
+      "id": 2001,
+      "userId": 2,
+      "title": "Report Request",
+      "message": "General Director requested Q1 progress report",
+      "type": "request",
+      "read": false,
+      "createdAt": "2024-03-16T10:30:00Z"
+    },
+    {
+      "id": 2002,
+      "userId": 6,
+      "title": "Report Request",
+      "message": "Director requested Engineering Division weekly report",
+      "type": "request",
+      "read": false,
+      "createdAt": "2024-03-16T09:15:00Z"
+    },
+    {
+      "id": 2003,
+      "userId": 10,
+      "title": "Task Assigned",
+      "message": "New task: Implement Kafka stream processors",
+      "type": "assignment",
+      "read": false,
+      "createdAt": "2024-03-15T14:20:00Z"
+    }
+  ]
+}
