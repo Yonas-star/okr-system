@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { 
   Card, Row, Col, Typography, Progress, Table, Tag, Button, Avatar, 
   List, Space, Select, Modal, Form, Input, Dropdown, Badge, 
-  Tabs, Tree, message, Statistic, Tooltip, Checkbox, Divider 
+  Tabs, Tree, message, Statistic, Tooltip, Checkbox, Divider, 
+  DatePicker, Upload, Switch, Timeline,
+  Calendar, Collapse, Descriptions, Popconfirm
 } from 'antd';
 import { 
   UserOutlined, 
@@ -20,7 +22,6 @@ import {
   AppstoreOutlined,
   ApartmentOutlined,
   LockOutlined,
-  UnlockOutlined,
   EyeOutlined,
   DownloadOutlined,
   CopyOutlined,
@@ -30,14 +31,18 @@ import {
   DragOutlined,
   DashboardOutlined,
   LayoutOutlined,
-  ColumnHeightOutlined,
   FilterOutlined,
   SortAscendingOutlined,
   CalendarOutlined,
   DollarOutlined,
-  FundOutlined,
   ProjectOutlined,
-  ScheduleOutlined
+  ScheduleOutlined,
+  PaperClipOutlined,
+  CheckSquareOutlined,
+  HolderOutlined,
+  ThunderboltOutlined,
+  ReloadOutlined,
+  ExportOutlined
 } from '@ant-design/icons';
 import KanbanBoard from '../../components/KanbanBoard';
 
@@ -45,9 +50,12 @@ const { Title, Text } = Typography;
 const { TabPane } = Tabs;
 const { Option } = Select;
 const { TreeNode } = Tree;
+const { TextArea } = Input;
+const { Panel } = Collapse;
 
 const DivisionHead = () => {
   const [activeTab, setActiveTab] = useState('1');
+  const [activeView, setActiveView] = useState('table');
   const [isTaskModalVisible, setIsTaskModalVisible] = useState(false);
   const [isAssignModalVisible, setIsAssignModalVisible] = useState(false);
   const [isReportModalVisible, setIsReportModalVisible] = useState(false);
@@ -56,11 +64,25 @@ const DivisionHead = () => {
   const [isComponentSelectorVisible, setIsComponentSelectorVisible] = useState(false);
   const [isSaveTemplateModalVisible, setIsSaveTemplateModalVisible] = useState(false);
   const [isEditBoardModalVisible, setIsEditBoardModalVisible] = useState(false);
+  const [isTaskDetailModalVisible, setIsTaskDetailModalVisible] = useState(false);
+  const [isAutomationModalVisible, setIsAutomationModalVisible] = useState(false);
+  const [isAutomationEditModalVisible, setIsAutomationEditModalVisible] = useState(false);
+  const [isChecklistModalVisible, setIsChecklistModalVisible] = useState(false);
+  const [isSubTaskModalVisible, setIsSubTaskModalVisible] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState('main');
   const [editingBoard, setEditingBoard] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [selectedAutomation, setSelectedAutomation] = useState(null);
+  const [editingTask, setEditingTask] = useState(null);
+  const [editingSubTask, setEditingSubTask] = useState(null);
+  const [editingChecklistItem, setEditingChecklistItem] = useState(null);
   const [form] = Form.useForm();
-  
-  // Define base data first
+  const [taskForm] = Form.useForm();
+  const [automationForm] = Form.useForm();
+  const [checklistForm] = Form.useForm();
+  const [subTaskForm] = Form.useForm();
+
+  // Define all base data first
   const divisionStructure = {
     id: 1,
     name: 'Product Development Division',
@@ -176,6 +198,225 @@ const DivisionHead = () => {
     { id: 3, title: 'Q1 OKR Review', status: 'approved', date: '2024-03-10', submittedBy: 'Alex Rivera' },
   ];
 
+  // Enhanced Task/Item structure with Monday.com-like columns
+  const [tasks, setTasks] = useState([
+    {
+      id: 1,
+      title: "Design Customer Portal Dashboard",
+      status: "in-progress",
+      statusColor: "processing",
+      priority: "high",
+      priorityColor: "red",
+      assignees: ["Emma Watson", "David Kim"],
+      team: "Frontend",
+      dueDate: "2024-04-15",
+      startDate: "2024-03-01",
+      estimatedHours: 40,
+      actualHours: 28,
+      description: "Create a modern, responsive dashboard for customer portal with real-time analytics",
+      longDescription: "The dashboard should include:\n- Key metrics cards\n- Activity timeline\n- Recent orders\n- Customer satisfaction score\n- Performance charts",
+      tags: ["UI/UX", "Dashboard", "Customer-facing"],
+      attachments: [
+        { id: 1, name: "dashboard-design.fig", url: "#", size: "2.4 MB" },
+        { id: 2, name: "requirements.pdf", url: "#", size: "1.1 MB" }
+      ],
+      links: [
+        { id: 1, name: "Figma Design", url: "https://figma.com/..." },
+        { id: 2, name: "Jira Epic", url: "https://jira.com/..." }
+      ],
+      checklist: [
+        { id: 1, text: "Design wireframes", completed: true },
+        { id: 2, text: "Create high-fidelity mockups", completed: true },
+        { id: 3, text: "Get stakeholder approval", completed: false },
+        { id: 4, text: "Create style guide", completed: false }
+      ],
+      subTasks: [
+        {
+          id: 101,
+          title: "Design login page",
+          status: "completed",
+          assignee: "David Kim",
+          dueDate: "2024-03-10",
+          priority: "high"
+        },
+        {
+          id: 102,
+          title: "Create dashboard wireframes",
+          status: "in-progress",
+          assignee: "Emma Watson",
+          dueDate: "2024-03-20",
+          priority: "medium"
+        },
+        {
+          id: 103,
+          title: "Design analytics widgets",
+          status: "todo",
+          assignee: "Lisa Wang",
+          dueDate: "2024-03-25",
+          priority: "low"
+        }
+      ],
+      comments: [
+        { id: 1, user: "Emma Watson", text: "Started working on wireframes", timestamp: "2024-03-15 10:30" },
+        { id: 2, user: "Alex Rivera", text: "Please prioritize the dashboard first", timestamp: "2024-03-16 09:15" }
+      ],
+      dependencies: [2, 3],
+      blockedBy: [],
+      timeTracking: [
+        { id: 1, date: "2024-03-15", hours: 4, description: "Wireframing" },
+        { id: 2, date: "2024-03-16", hours: 6, description: "Mockups" }
+      ],
+      customFields: {
+        "client": "Internal",
+        "sprint": "Sprint 12",
+        "storyPoints": 8
+      },
+      createdAt: "2024-03-01",
+      updatedAt: "2024-03-16"
+    },
+    {
+      id: 2,
+      title: "Implement API Rate Limiting",
+      status: "todo",
+      statusColor: "default",
+      priority: "high",
+      priorityColor: "red",
+      assignees: ["James Chen"],
+      team: "Backend",
+      dueDate: "2024-04-30",
+      startDate: "2024-04-01",
+      estimatedHours: 24,
+      actualHours: 0,
+      description: "Implement rate limiting for API endpoints to prevent abuse",
+      longDescription: "Requirements:\n- 100 requests per minute per API key\n- 1000 requests per day per user\n- Custom limits for premium customers\n- Rate limit headers in responses",
+      tags: ["Backend", "Security", "API"],
+      attachments: [],
+      links: [],
+      checklist: [
+        { id: 1, text: "Design rate limiting algorithm", completed: false },
+        { id: 2, text: "Implement Redis storage", completed: false },
+        { id: 3, text: "Add rate limit headers", completed: false },
+        { id: 4, text: "Write tests", completed: false }
+      ],
+      subTasks: [
+        {
+          id: 201,
+          title: "Research rate limiting strategies",
+          status: "completed",
+          assignee: "James Chen",
+          dueDate: "2024-04-05",
+          priority: "medium"
+        }
+      ],
+      comments: [],
+      dependencies: [],
+      blockedBy: [1],
+      timeTracking: [],
+      customFields: {
+        "client": "Internal",
+        "sprint": "Sprint 13",
+        "storyPoints": 5
+      },
+      createdAt: "2024-03-05",
+      updatedAt: "2024-03-05"
+    },
+    {
+      id: 3,
+      title: "Fix Production Bug #2345",
+      status: "review",
+      statusColor: "warning",
+      priority: "urgent",
+      priorityColor: "purple",
+      assignees: ["Michael Brown", "Sarah Johnson"],
+      team: "DevOps",
+      dueDate: "2024-03-18",
+      startDate: "2024-03-17",
+      estimatedHours: 8,
+      actualHours: 6,
+      description: "Critical bug causing database connection pool exhaustion",
+      longDescription: "Issue: Database connections not being released properly after queries.\nImpact: Service degradation every 2 hours.\nFix: Implement connection pool validation and proper release in error cases.",
+      tags: ["Bug", "Critical", "Database"],
+      attachments: [
+        { id: 3, name: "error-logs.txt", url: "#", size: "0.5 MB" }
+      ],
+      links: [
+        { id: 3, name: "Bug Report", url: "https://jira.com/bug-2345" }
+      ],
+      checklist: [
+        { id: 1, text: "Reproduce issue locally", completed: true },
+        { id: 2, text: "Identify root cause", completed: true },
+        { id: 3, text: "Implement fix", completed: false },
+        { id: 4, text: "Deploy to staging", completed: false },
+        { id: 5, text: "Test in production", completed: false }
+      ],
+      subTasks: [
+        {
+          id: 301,
+          title: "Create database backup",
+          status: "completed",
+          assignee: "Michael Brown",
+          dueDate: "2024-03-17",
+          priority: "urgent"
+        },
+        {
+          id: 302,
+          title: "Deploy hotfix",
+          status: "todo",
+          assignee: "Michael Brown",
+          dueDate: "2024-03-18",
+          priority: "urgent"
+        }
+      ],
+      comments: [
+        { id: 3, user: "Sarah Johnson", text: "Found the issue - connection not closed in error handler", timestamp: "2024-03-17 14:20" }
+      ],
+      dependencies: [],
+      blockedBy: [],
+      timeTracking: [
+        { id: 3, date: "2024-03-17", hours: 4, description: "Debugging" },
+        { id: 4, date: "2024-03-17", hours: 2, description: "Fix implementation" }
+      ],
+      customFields: {
+        "severity": "Critical",
+        "environment": "Production",
+        "storyPoints": 3
+      },
+      createdAt: "2024-03-17",
+      updatedAt: "2024-03-17"
+    }
+  ]);
+
+  // Automations configuration
+  const [automations, setAutomations] = useState([
+    {
+      id: 1,
+      name: "Notify Manager on High Priority Tasks",
+      trigger: "task.created",
+      condition: "priority = high",
+      action: "notify.manager",
+      active: true,
+      createdAt: "2024-03-01"
+    },
+    {
+      id: 2,
+      name: "Move to Done and Notify",
+      trigger: "status.changed",
+      condition: "status = completed",
+      action: "move.to.done.and.notify",
+      active: true,
+      createdAt: "2024-03-01"
+    },
+    {
+      id: 3,
+      name: "Due Date Reminder",
+      trigger: "due.date.approaching",
+      condition: "dueDate in 2 days",
+      action: "send.reminder",
+      active: true,
+      createdAt: "2024-03-01"
+    }
+  ]);
+
   // Boards state with different data for each board
   const [boards, setBoards] = useState([
     { 
@@ -183,7 +424,7 @@ const DivisionHead = () => {
       name: 'Main Division Board', 
       type: 'main',
       icon: <DashboardOutlined />,
-      components: ['stats', 'structure', 'permissions', 'okrs', 'team', 'reports'],
+      components: ['stats', 'structure', 'permissions', 'okrs', 'team', 'reports', 'tasks', 'automations'],
       data: {
         stats: {
           teamMembers: 29,
@@ -198,17 +439,19 @@ const DivisionHead = () => {
         members: teamMembers,
         okrs: divisionOKRs,
         projects: divisionProjects,
-        reports: divisionReports
+        reports: divisionReports,
+        tasks: tasks
       },
       isTemplate: false,
-      createdAt: '2024-03-01'
+      createdAt: '2024-03-01',
+      updatedAt: '2024-03-01'
     },
     { 
       id: 'projects', 
       name: 'Projects Board', 
       type: 'project',
       icon: <ProjectOutlined />,
-      components: ['stats', 'projects', 'timeline', 'team'],
+      components: ['stats', 'projects', 'timeline', 'team', 'tasks'],
       data: {
         stats: {
           teamMembers: 15,
@@ -251,10 +494,12 @@ const DivisionHead = () => {
           { id: 1, name: 'John Smith', role: 'Lead Developer', team: 'Mobile', status: 'active', workload: 90 },
           { id: 2, name: 'Sarah Lee', role: 'Developer', team: 'Mobile', status: 'active', workload: 75 },
           { id: 3, name: 'Mike Johnson', role: 'Developer', team: 'Frontend', status: 'active', workload: 60 }
-        ]
+        ],
+        tasks: tasks.filter(t => t.team === 'Frontend' || t.team === 'Mobile')
       },
       isTemplate: false,
-      createdAt: '2024-03-05'
+      createdAt: '2024-03-05',
+      updatedAt: '2024-03-05'
     },
     { 
       id: 'hr', 
@@ -292,11 +537,12 @@ const DivisionHead = () => {
         ]
       },
       isTemplate: false,
-      createdAt: '2024-03-10'
+      createdAt: '2024-03-10',
+      updatedAt: '2024-03-10'
     }
   ]);
 
-  const [selectedComponents, setSelectedComponents] = useState(['stats', 'structure', 'permissions', 'okrs', 'projects', 'team', 'reports']);
+  const [selectedComponents, setSelectedComponents] = useState(['stats', 'structure', 'permissions', 'okrs', 'projects', 'team', 'reports', 'tasks']);
   const [permissions, setPermissions] = useState({
     divisionHead: ['read', 'write', 'assign', 'approve', 'delete'],
     teamLeads: ['read', 'write', 'assign'],
@@ -403,26 +649,46 @@ const DivisionHead = () => {
       description: 'Track expenses and budget',
       defaultSize: 'half',
       preview: '💰 Monitor financial metrics'
+    },
+    {
+      id: 'tasks',
+      name: 'Task Management',
+      icon: <CheckSquareOutlined />,
+      category: 'project',
+      description: 'Manage tasks with columns and sub-tasks',
+      defaultSize: 'full',
+      preview: '✅ Track tasks with custom columns'
+    },
+    {
+      id: 'automations',
+      name: 'Automations',
+      icon: <ThunderboltOutlined />,
+      category: 'automation',
+      description: 'Automate workflows and notifications',
+      defaultSize: 'full',
+      preview: '⚡ Set up triggers and actions'
     }
   ];
 
   // Saved Templates
-  const savedTemplates = [
+  const [savedTemplates, setSavedTemplates] = useState([
     {
       id: 1,
       name: 'Standard Division Board',
       description: 'Complete division management with all components',
-      components: ['stats', 'structure', 'permissions', 'okrs', 'projects', 'team', 'reports'],
+      components: ['stats', 'structure', 'permissions', 'okrs', 'projects', 'team', 'reports', 'tasks'],
       usage: 24,
-      category: 'management'
+      category: 'management',
+      createdAt: '2024-01-01'
     },
     {
       id: 2,
       name: 'Project Tracking Board',
       description: 'Focus on project delivery and timelines',
-      components: ['stats', 'projects', 'timeline', 'team'],
+      components: ['stats', 'projects', 'timeline', 'team', 'tasks'],
       usage: 18,
-      category: 'project'
+      category: 'project',
+      createdAt: '2024-01-15'
     },
     {
       id: 3,
@@ -430,7 +696,8 @@ const DivisionHead = () => {
       description: 'HR and team management focus',
       components: ['stats', 'structure', 'team', 'permissions', 'reports'],
       usage: 12,
-      category: 'hr'
+      category: 'hr',
+      createdAt: '2024-02-01'
     },
     {
       id: 4,
@@ -438,9 +705,10 @@ const DivisionHead = () => {
       description: 'High-level metrics and OKRs',
       components: ['stats', 'okrs', 'reports'],
       usage: 30,
-      category: 'executive'
+      category: 'executive',
+      createdAt: '2024-02-15'
     }
-  ];
+  ]);
 
   // Get current board data
   const currentBoard = boards.find(board => board.id === selectedBoard) || boards[0];
@@ -464,6 +732,8 @@ const DivisionHead = () => {
       case 'in-progress': return 'processing';
       case 'pending': return 'default';
       case 'review': return 'warning';
+      case 'todo': return 'default';
+      case 'blocked': return 'error';
       default: return 'default';
     }
   };
@@ -473,20 +743,282 @@ const DivisionHead = () => {
       case 'high': return 'red';
       case 'medium': return 'orange';
       case 'low': return 'green';
+      case 'urgent': return 'purple';
       default: return 'blue';
     }
   };
 
-  const handleAssignTask = (values) => {
-    message.success(`Task assigned to ${values.assignee}`);
-    setIsAssignModalVisible(false);
+  // Task CRUD Operations
+  const handleCreateTask = (values) => {
+    const newTask = {
+      id: Math.max(...tasks.map(t => t.id), 0) + 1,
+      ...values,
+      status: values.status || 'todo',
+      priority: values.priority || 'medium',
+      assignees: values.assignees || [],
+      checklist: [],
+      subTasks: [],
+      comments: [],
+      attachments: [],
+      links: [],
+      timeTracking: [],
+      tags: values.tags || [],
+      estimatedHours: values.estimatedHours || 0,
+      actualHours: 0,
+      longDescription: values.description,
+      createdAt: new Date().toISOString().split('T')[0],
+      updatedAt: new Date().toISOString().split('T')[0]
+    };
+    setTasks([...tasks, newTask]);
+    message.success('Task created successfully');
+    setIsTaskModalVisible(false);
+    setEditingTask(null);
+    taskForm.resetFields();
   };
 
-  const handleSubmitReport = (values) => {
-    message.success('Report submitted successfully');
-    setIsReportModalVisible(false);
+  const handleUpdateTask = (values) => {
+    const updatedTasks = tasks.map(task => 
+      task.id === editingTask.id 
+        ? { 
+            ...task, 
+            ...values,
+            longDescription: values.description,
+            updatedAt: new Date().toISOString().split('T')[0]
+          }
+        : task
+    );
+    setTasks(updatedTasks);
+    message.success('Task updated successfully');
+    setIsTaskModalVisible(false);
+    setEditingTask(null);
+    taskForm.resetFields();
   };
 
+  const handleDeleteTask = (taskId) => {
+    setTasks(tasks.filter(task => task.id !== taskId));
+    message.success('Task deleted successfully');
+  };
+
+  const handleDuplicateTask = (task) => {
+    const newTask = {
+      ...task,
+      id: Math.max(...tasks.map(t => t.id), 0) + 1,
+      title: `${task.title} (Copy)`,
+      createdAt: new Date().toISOString().split('T')[0],
+      updatedAt: new Date().toISOString().split('T')[0]
+    };
+    setTasks([...tasks, newTask]);
+    message.success('Task duplicated successfully');
+  };
+
+  const handleStatusChange = (taskId, newStatus) => {
+    setTasks(tasks.map(task => 
+      task.id === taskId ? { ...task, status: newStatus, updatedAt: new Date().toISOString().split('T')[0] } : task
+    ));
+    
+    // Trigger automations
+    const task = tasks.find(t => t.id === taskId);
+    if (task && newStatus === 'completed') {
+      message.success(`Task "${task.title}" completed! Notifying manager...`);
+    }
+  };
+
+  const handlePriorityChange = (taskId, newPriority) => {
+    setTasks(tasks.map(task => 
+      task.id === taskId ? { ...task, priority: newPriority, updatedAt: new Date().toISOString().split('T')[0] } : task
+    ));
+  };
+
+  // Checklist Operations
+  const handleAddChecklistItem = (values) => {
+    if (!selectedTask) return;
+    
+    const newItem = {
+      id: Math.max(...selectedTask.checklist.map(i => i.id), 0) + 1,
+      text: values.text,
+      completed: false
+    };
+    const updatedTasks = tasks.map(task => 
+      task.id === selectedTask.id 
+        ? { 
+            ...task, 
+            checklist: [...task.checklist, newItem],
+            updatedAt: new Date().toISOString().split('T')[0]
+          }
+        : task
+    );
+    setTasks(updatedTasks);
+    setSelectedTask(updatedTasks.find(t => t.id === selectedTask.id));
+    message.success('Checklist item added');
+    checklistForm.resetFields();
+  };
+
+  const handleUpdateChecklistItem = (values) => {
+    if (!selectedTask || !editingChecklistItem) return;
+    
+    const updatedTasks = tasks.map(task => 
+      task.id === selectedTask.id 
+        ? { 
+            ...task, 
+            checklist: task.checklist.map(item => 
+              item.id === editingChecklistItem.id 
+                ? { ...item, text: values.text }
+                : item
+            ),
+            updatedAt: new Date().toISOString().split('T')[0]
+          }
+        : task
+    );
+    setTasks(updatedTasks);
+    setSelectedTask(updatedTasks.find(t => t.id === selectedTask.id));
+    setEditingChecklistItem(null);
+    message.success('Checklist item updated');
+    checklistForm.resetFields();
+  };
+
+  const handleDeleteChecklistItem = (itemId) => {
+    if (!selectedTask) return;
+    
+    const updatedTasks = tasks.map(task => 
+      task.id === selectedTask.id 
+        ? { 
+            ...task, 
+            checklist: task.checklist.filter(item => item.id !== itemId),
+            updatedAt: new Date().toISOString().split('T')[0]
+          }
+        : task
+    );
+    setTasks(updatedTasks);
+    setSelectedTask(updatedTasks.find(t => t.id === selectedTask.id));
+    message.success('Checklist item deleted');
+  };
+
+  const handleToggleChecklistItem = (taskId, itemId) => {
+    setTasks(tasks.map(task => 
+      task.id === taskId 
+        ? {
+            ...task,
+            checklist: task.checklist.map(item =>
+              item.id === itemId ? { ...item, completed: !item.completed } : item
+            ),
+            updatedAt: new Date().toISOString().split('T')[0]
+          }
+        : task
+    ));
+  };
+
+  // Sub-task Operations
+  const handleAddSubTask = (values) => {
+    if (!selectedTask) return;
+    
+    const newSubTask = {
+      id: Math.max(...selectedTask.subTasks.map(s => s.id), 0) + 1,
+      title: values.title,
+      status: values.status || 'todo',
+      assignee: values.assignee,
+      dueDate: values.dueDate,
+      priority: values.priority || 'medium'
+    };
+    const updatedTasks = tasks.map(task => 
+      task.id === selectedTask.id 
+        ? { 
+            ...task, 
+            subTasks: [...task.subTasks, newSubTask],
+            updatedAt: new Date().toISOString().split('T')[0]
+          }
+        : task
+    );
+    setTasks(updatedTasks);
+    setSelectedTask(updatedTasks.find(t => t.id === selectedTask.id));
+    message.success('Sub-task added successfully');
+    setIsSubTaskModalVisible(false);
+    subTaskForm.resetFields();
+  };
+
+  const handleUpdateSubTask = (values) => {
+    if (!selectedTask || !editingSubTask) return;
+    
+    const updatedTasks = tasks.map(task => 
+      task.id === selectedTask.id 
+        ? { 
+            ...task, 
+            subTasks: task.subTasks.map(sub => 
+              sub.id === editingSubTask.id 
+                ? { ...sub, ...values }
+                : sub
+            ),
+            updatedAt: new Date().toISOString().split('T')[0]
+          }
+        : task
+    );
+    setTasks(updatedTasks);
+    setSelectedTask(updatedTasks.find(t => t.id === selectedTask.id));
+    message.success('Sub-task updated successfully');
+    setIsSubTaskModalVisible(false);
+    setEditingSubTask(null);
+    subTaskForm.resetFields();
+  };
+
+  const handleDeleteSubTask = (subTaskId) => {
+    if (!selectedTask) return;
+    
+    const updatedTasks = tasks.map(task => 
+      task.id === selectedTask.id 
+        ? { 
+            ...task, 
+            subTasks: task.subTasks.filter(sub => sub.id !== subTaskId),
+            updatedAt: new Date().toISOString().split('T')[0]
+          }
+        : task
+    );
+    setTasks(updatedTasks);
+    setSelectedTask(updatedTasks.find(t => t.id === selectedTask.id));
+    message.success('Sub-task deleted successfully');
+  };
+
+  // Automation Operations
+  const handleCreateAutomation = (values) => {
+    const newAutomation = {
+      id: automations.length + 1,
+      ...values,
+      active: true,
+      createdAt: new Date().toISOString().split('T')[0]
+    };
+    setAutomations([...automations, newAutomation]);
+    message.success('Automation created successfully');
+    setIsAutomationEditModalVisible(false);
+    automationForm.resetFields();
+  };
+
+  const handleUpdateAutomation = (values) => {
+    if (!selectedAutomation) return;
+    
+    const updatedAutomations = automations.map(automation => 
+      automation.id === selectedAutomation.id 
+        ? { ...automation, ...values }
+        : automation
+    );
+    setAutomations(updatedAutomations);
+    message.success('Automation updated successfully');
+    setIsAutomationEditModalVisible(false);
+    setSelectedAutomation(null);
+    automationForm.resetFields();
+  };
+
+  const handleDeleteAutomation = (automationId) => {
+    setAutomations(automations.filter(a => a.id !== automationId));
+    message.success('Automation deleted successfully');
+  };
+
+  const handleToggleAutomation = (automationId) => {
+    setAutomations(automations.map(automation => 
+      automation.id === automationId 
+        ? { ...automation, active: !automation.active }
+        : automation
+    ));
+  };
+
+  // Board Operations
   const handleCreateBoard = (values) => {
     const newBoard = {
       id: `board-${Date.now()}`,
@@ -507,10 +1039,12 @@ const DivisionHead = () => {
         },
         projects: [],
         members: [],
-        reports: []
+        reports: [],
+        tasks: []
       },
       isTemplate: false,
-      createdAt: new Date().toISOString().split('T')[0]
+      createdAt: new Date().toISOString().split('T')[0],
+      updatedAt: new Date().toISOString().split('T')[0]
     };
     setBoards([...boards, newBoard]);
     setSelectedBoard(newBoard.id);
@@ -533,7 +1067,8 @@ const DivisionHead = () => {
             type: values.boardType,
             components: selectedComponents,
             icon: values.boardType === 'project' ? <ProjectOutlined /> : 
-                  values.boardType === 'hr' ? <TeamOutlined /> : <DashboardOutlined />
+                  values.boardType === 'hr' ? <TeamOutlined /> : <DashboardOutlined />,
+            updatedAt: new Date().toISOString().split('T')[0]
           }
         : board
     );
@@ -553,6 +1088,19 @@ const DivisionHead = () => {
     message.success('Board deleted successfully');
   };
 
+  const handleDuplicateBoard = () => {
+    const newBoard = {
+      ...currentBoard,
+      id: `board-${Date.now()}`,
+      name: `${currentBoard.name} (Copy)`,
+      createdAt: new Date().toISOString().split('T')[0],
+      updatedAt: new Date().toISOString().split('T')[0]
+    };
+    setBoards([...boards, newBoard]);
+    message.success('Board duplicated successfully');
+  };
+
+  // Template Operations
   const handleSaveAsTemplate = (values) => {
     const newTemplate = {
       id: savedTemplates.length + 1,
@@ -560,8 +1108,10 @@ const DivisionHead = () => {
       description: values.description,
       components: selectedComponents,
       usage: 0,
-      category: values.category
+      category: values.category,
+      createdAt: new Date().toISOString().split('T')[0]
     };
+    setSavedTemplates([...savedTemplates, newTemplate]);
     message.success(`Template "${values.templateName}" saved successfully`);
     setIsSaveTemplateModalVisible(false);
   };
@@ -572,6 +1122,43 @@ const DivisionHead = () => {
     setIsTemplateModalVisible(false);
   };
 
+  const handleDeleteTemplate = (templateId) => {
+    setSavedTemplates(savedTemplates.filter(t => t.id !== templateId));
+    message.success('Template deleted successfully');
+  };
+
+  // Assignment Operations
+  const handleAssignTask = (values) => {
+    const selectedTaskObj = tasks.find(t => t.id === values.task);
+    if (selectedTaskObj) {
+      const updatedTasks = tasks.map(task => 
+        task.id === values.task 
+          ? { 
+              ...task, 
+              assignees: [...(task.assignees || []), values.assignee],
+              updatedAt: new Date().toISOString().split('T')[0]
+            }
+          : task
+      );
+      setTasks(updatedTasks);
+      message.success(`Task assigned to ${values.assignee}`);
+    }
+    setIsAssignModalVisible(false);
+  };
+
+  // Report Operations
+  const handleSubmitReport = (values) => {
+    const newReport = {
+      id: divisionReports.length + 1,
+      title: values.title,
+      status: 'submitted',
+      date: new Date().toISOString().split('T')[0],
+      submittedBy: 'Alex Rivera'
+    };
+    message.success('Report submitted successfully');
+    setIsReportModalVisible(false);
+  };
+
   const toggleComponent = (componentId) => {
     setSelectedComponents(prev => 
       prev.includes(componentId) 
@@ -580,7 +1167,247 @@ const DivisionHead = () => {
     );
   };
 
-  // Updated permission menu using items prop
+  // Column definitions for table view
+  const taskColumns = [
+    {
+      title: (
+        <Space>
+          <Checkbox />
+          <span>Task</span>
+        </Space>
+      ),
+      key: 'title',
+      render: (_, record) => (
+        <Space>
+          <Checkbox />
+          <HolderOutlined style={{ cursor: 'grab', color: '#999' }} />
+          <Avatar 
+            size="small" 
+            style={{ 
+              backgroundColor: record.status === 'completed' ? '#52c41a' : 
+                             record.status === 'in-progress' ? '#1890ff' : '#d9d9d9' 
+            }} 
+          />
+          <div>
+            <div>
+              <Text 
+                strong 
+                style={{ 
+                  textDecoration: record.status === 'completed' ? 'line-through' : 'none',
+                  cursor: 'pointer'
+                }}
+                onClick={() => {
+                  setSelectedTask(record);
+                  setIsTaskDetailModalVisible(true);
+                }}
+              >
+                {record.title}
+              </Text>
+            </div>
+            <Text type="secondary" style={{ fontSize: 12 }}>ID: TASK-{record.id}</Text>
+          </div>
+        </Space>
+      )
+    },
+    {
+      title: 'Status',
+      key: 'status',
+      render: (_, record) => (
+        <Select 
+          value={record.status} 
+          style={{ width: 130 }}
+          onChange={(value) => handleStatusChange(record.id, value)}
+        >
+          <Option value="todo">
+            <Tag color="default">To Do</Tag>
+          </Option>
+          <Option value="in-progress">
+            <Tag color="processing">In Progress</Tag>
+          </Option>
+          <Option value="review">
+            <Tag color="warning">In Review</Tag>
+          </Option>
+          <Option value="completed">
+            <Tag color="success">Completed</Tag>
+          </Option>
+          <Option value="blocked">
+            <Tag color="error">Blocked</Tag>
+          </Option>
+        </Select>
+      )
+    },
+    {
+      title: 'Priority',
+      key: 'priority',
+      render: (_, record) => (
+        <Select 
+          value={record.priority} 
+          style={{ width: 100 }}
+          onChange={(value) => handlePriorityChange(record.id, value)}
+        >
+          <Option value="low">
+            <Tag color="green">Low</Tag>
+          </Option>
+          <Option value="medium">
+            <Tag color="orange">Medium</Tag>
+          </Option>
+          <Option value="high">
+            <Tag color="red">High</Tag>
+          </Option>
+          <Option value="urgent">
+            <Tag color="purple">Urgent</Tag>
+          </Option>
+        </Select>
+      )
+    },
+    {
+      title: 'Assignees',
+      key: 'assignees',
+      render: (_, record) => (
+        <Avatar.Group maxCount={3}>
+          {(record.assignees || []).map((assignee, index) => (
+            <Tooltip key={index} title={assignee}>
+              <Avatar size="small" style={{ backgroundColor: '#1890ff' }}>
+                {assignee.charAt(0)}
+              </Avatar>
+            </Tooltip>
+          ))}
+        </Avatar.Group>
+      )
+    },
+    {
+      title: 'Due Date',
+      key: 'dueDate',
+      render: (_, record) => {
+        const isOverdue = new Date(record.dueDate) < new Date() && record.status !== 'completed';
+        return (
+          <Space>
+            <CalendarOutlined style={{ color: isOverdue ? '#f5222d' : '#1890ff' }} />
+            <Text type={isOverdue ? 'danger' : undefined}>{record.dueDate}</Text>
+          </Space>
+        );
+      }
+    },
+    {
+      title: 'Progress',
+      key: 'progress',
+      render: (_, record) => {
+        const completed = record.checklist?.filter(item => item.completed).length || 0;
+        const total = record.checklist?.length || 0;
+        const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+        return (
+          <Tooltip title={`${completed}/${total} items completed`}>
+            <Progress percent={percent} size="small" style={{ width: 80 }} />
+          </Tooltip>
+        );
+      }
+    },
+    {
+      title: 'Tags',
+      key: 'tags',
+      render: (_, record) => (
+        <Space>
+          {(record.tags || []).map(tag => (
+            <Tag key={tag} color="blue">{tag}</Tag>
+          ))}
+        </Space>
+      )
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <Space>
+          <Tooltip title="View Details">
+            <Button 
+              type="text" 
+              icon={<EyeOutlined />} 
+              size="small"
+              onClick={() => {
+                setSelectedTask(record);
+                setIsTaskDetailModalVisible(true);
+              }}
+            />
+          </Tooltip>
+          <Tooltip title="Edit">
+            <Button 
+              type="text" 
+              icon={<EditOutlined />} 
+              size="small"
+              onClick={() => {
+                setEditingTask(record);
+                taskForm.setFieldsValue({
+                  title: record.title,
+                  status: record.status,
+                  priority: record.priority,
+                  assignees: record.assignees,
+                  team: record.team,
+                  dueDate: record.dueDate,
+                  startDate: record.startDate,
+                  estimatedHours: record.estimatedHours,
+                  description: record.description,
+                  tags: record.tags
+                });
+                setIsTaskModalVisible(true);
+              }}
+            />
+          </Tooltip>
+          <Tooltip title="Add Sub-task">
+            <Button 
+              type="text" 
+              icon={<PlusOutlined />} 
+              size="small"
+              onClick={() => {
+                setSelectedTask(record);
+                setEditingSubTask(null);
+                subTaskForm.resetFields();
+                setIsSubTaskModalVisible(true);
+              }}
+            />
+          </Tooltip>
+          <Tooltip title="Manage Checklist">
+            <Button 
+              type="text" 
+              icon={<CheckSquareOutlined />} 
+              size="small"
+              onClick={() => {
+                setSelectedTask(record);
+                setIsChecklistModalVisible(true);
+              }}
+            />
+          </Tooltip>
+          <Dropdown 
+            menu={{
+              items: [
+                {
+                  key: 'duplicate',
+                  icon: <CopyOutlined />,
+                  label: 'Duplicate',
+                  onClick: () => handleDuplicateTask(record)
+                },
+                {
+                  key: 'archive',
+                  icon: <FolderOutlined />,
+                  label: 'Archive'
+                },
+                {
+                  key: 'delete',
+                  icon: <DeleteOutlined />,
+                  label: 'Delete',
+                  danger: true,
+                  onClick: () => handleDeleteTask(record.id)
+                }
+              ]
+            }}
+          >
+            <Button type="text" icon={<HolderOutlined />} size="small" />
+          </Dropdown>
+        </Space>
+      )
+    }
+  ];
+
+  // Permission menu items
   const permissionMenuItems = [
     { key: 'read', label: 'Read Only' },
     { key: 'write', label: 'Read & Write' },
@@ -611,6 +1438,40 @@ const DivisionHead = () => {
     },
   ];
 
+  // View options menu
+  const viewMenuItems = [
+    {
+      key: 'table',
+      icon: <AppstoreOutlined />,
+      label: 'Table View',
+      onClick: () => setActiveView('table')
+    },
+    {
+      key: 'kanban',
+      icon: <DragOutlined />,
+      label: 'Kanban View',
+      onClick: () => setActiveView('kanban')
+    },
+    {
+      key: 'calendar',
+      icon: <CalendarOutlined />,
+      label: 'Calendar View',
+      onClick: () => setActiveView('calendar')
+    },
+    {
+      key: 'timeline',
+      icon: <ScheduleOutlined />,
+      label: 'Timeline View',
+      onClick: () => setActiveView('timeline')
+    },
+    {
+      key: 'gantt',
+      icon: <BarChartOutlined />,
+      label: 'Gantt View',
+      onClick: () => setActiveView('gantt')
+    }
+  ];
+
   // Board actions menu
   const boardActionsMenu = {
     items: [
@@ -623,7 +1484,18 @@ const DivisionHead = () => {
       {
         key: 'duplicate',
         icon: <CopyOutlined />,
-        label: 'Duplicate Board'
+        label: 'Duplicate Board',
+        onClick: handleDuplicateBoard
+      },
+      {
+        key: 'refresh',
+        icon: <ReloadOutlined />,
+        label: 'Refresh Board'
+      },
+      {
+        key: 'export',
+        icon: <ExportOutlined />,
+        label: 'Export Board'
       },
       {
         key: 'delete',
@@ -698,6 +1570,242 @@ const DivisionHead = () => {
                 </Card>
               </Col>
             </Row>
+          </Col>
+        );
+      case 'tasks':
+        return (
+          <Col span={24} key="tasks">
+            <Card 
+              title={
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <CheckSquareOutlined style={{ color: '#1890ff' }} />
+                  <span>Task Management</span>
+                </div>
+              }
+              extra={
+                <Space>
+                  <Dropdown menu={{ items: viewMenuItems }}>
+                    <Button icon={<AppstoreOutlined />}>
+                      {activeView.charAt(0).toUpperCase() + activeView.slice(1)} View
+                    </Button>
+                  </Dropdown>
+                  <Button 
+                    icon={<PlusOutlined />} 
+                    type="primary" 
+                    onClick={() => {
+                      setEditingTask(null);
+                      taskForm.resetFields();
+                      setIsTaskModalVisible(true);
+                    }}
+                  >
+                    Create Task
+                  </Button>
+                  <Button 
+                    icon={<ThunderboltOutlined />} 
+                    onClick={() => setIsAutomationModalVisible(true)}
+                  >
+                    Automations
+                  </Button>
+                </Space>
+              }
+            >
+              {activeView === 'table' && (
+                <Table 
+                  dataSource={boardData?.tasks || tasks}
+                  columns={taskColumns}
+                  rowKey="id"
+                  pagination={{ pageSize: 10 }}
+                  expandable={{
+                    expandedRowRender: (record) => (
+                      <div style={{ paddingLeft: 40 }}>
+                        <Row gutter={24}>
+                          <Col span={12}>
+                            <Card size="small" title="Checklist">
+                              <List
+                                size="small"
+                                dataSource={record.checklist || []}
+                                renderItem={item => (
+                                  <List.Item
+                                    actions={[
+                                      <Button 
+                                        type="text" 
+                                        icon={<EditOutlined />} 
+                                        size="small"
+                                        onClick={() => {
+                                          setSelectedTask(record);
+                                          setEditingChecklistItem(item);
+                                          checklistForm.setFieldsValue({ text: item.text });
+                                        }}
+                                      />,
+                                      <Popconfirm
+                                        title="Delete checklist item?"
+                                        onConfirm={() => handleDeleteChecklistItem(item.id)}
+                                      >
+                                        <Button type="text" icon={<DeleteOutlined />} size="small" danger />
+                                      </Popconfirm>
+                                    ]}
+                                  >
+                                    <Checkbox 
+                                      checked={item.completed}
+                                      onChange={() => handleToggleChecklistItem(record.id, item.id)}
+                                    >
+                                      <Text style={{ 
+                                        textDecoration: item.completed ? 'line-through' : 'none',
+                                        color: item.completed ? '#999' : 'inherit'
+                                      }}>
+                                        {item.text}
+                                      </Text>
+                                    </Checkbox>
+                                  </List.Item>
+                                )}
+                              />
+                            </Card>
+                          </Col>
+                          <Col span={12}>
+                            <Card size="small" title="Sub-tasks">
+                              <List
+                                size="small"
+                                dataSource={record.subTasks || []}
+                                renderItem={subTask => (
+                                  <List.Item
+                                    actions={[
+                                      <Button 
+                                        type="text" 
+                                        icon={<EditOutlined />} 
+                                        size="small"
+                                        onClick={() => {
+                                          setSelectedTask(record);
+                                          setEditingSubTask(subTask);
+                                          subTaskForm.setFieldsValue({
+                                            title: subTask.title,
+                                            status: subTask.status,
+                                            assignee: subTask.assignee,
+                                            dueDate: subTask.dueDate,
+                                            priority: subTask.priority
+                                          });
+                                          setIsSubTaskModalVisible(true);
+                                        }}
+                                      />,
+                                      <Popconfirm
+                                        title="Delete sub-task?"
+                                        onConfirm={() => handleDeleteSubTask(subTask.id)}
+                                      >
+                                        <Button type="text" icon={<DeleteOutlined />} size="small" danger />
+                                      </Popconfirm>
+                                    ]}
+                                  >
+                                    <Space>
+                                      <Tag color={getStatusColor(subTask.status)}>
+                                        {subTask.status}
+                                      </Tag>
+                                      <Text>{subTask.title}</Text>
+                                      <Tag color={getPriorityColor(subTask.priority)}>
+                                        {subTask.priority}
+                                      </Tag>
+                                      <Text type="secondary">{subTask.assignee}</Text>
+                                    </Space>
+                                  </List.Item>
+                                )}
+                              />
+                            </Card>
+                          </Col>
+                        </Row>
+                      </div>
+                    )
+                  }}
+                />
+              )}
+              {activeView === 'kanban' && (
+                <KanbanBoard tasks={boardData?.tasks || tasks} />
+              )}
+              {activeView === 'calendar' && (
+                <div style={{ textAlign: 'center', padding: 40 }}>
+                  <CalendarOutlined style={{ fontSize: 48, color: '#1890ff' }} />
+                  <Title level={4}>Calendar View</Title>
+                  <Text type="secondary">Tasks displayed by due date on calendar</Text>
+                </div>
+              )}
+              {activeView === 'timeline' && (
+                <div style={{ textAlign: 'center', padding: 40 }}>
+                  <ScheduleOutlined style={{ fontSize: 48, color: '#1890ff' }} />
+                  <Title level={4}>Timeline View</Title>
+                  <Text type="secondary">Gantt chart showing task duration and dependencies</Text>
+                </div>
+              )}
+            </Card>
+          </Col>
+        );
+        return (
+          <Col span={24} key="automations">
+            <Card 
+              title={
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <ThunderboltOutlined style={{ color: '#1890ff' }} />
+                  <span>Automations</span>
+                </div>
+              }
+              extra={
+                <Button 
+                  icon={<PlusOutlined />} 
+                  type="primary"
+                  onClick={() => {
+                    setSelectedAutomation(null);
+                    automationForm.resetFields();
+                    setIsAutomationEditModalVisible(true);
+                  }}
+                >
+                  Create Automation
+                </Button>
+              }
+            >
+              <List
+                itemLayout="horizontal"
+                dataSource={automations}
+                renderItem={automation => (
+                  <List.Item
+                    actions={[
+                      <Switch 
+                        checked={automation.active} 
+                        onChange={() => handleToggleAutomation(automation.id)}
+                      />,
+                      <Button 
+                        type="text" 
+                        icon={<EditOutlined />}
+                        onClick={() => {
+                          setSelectedAutomation(automation);
+                          automationForm.setFieldsValue({
+                            name: automation.name,
+                            trigger: automation.trigger,
+                            condition: automation.condition,
+                            action: automation.action
+                          });
+                          setIsAutomationEditModalVisible(true);
+                        }}
+                      />,
+                      <Popconfirm
+                        title="Delete automation?"
+                        onConfirm={() => handleDeleteAutomation(automation.id)}
+                      >
+                        <Button type="text" icon={<DeleteOutlined />} danger />
+                      </Popconfirm>
+                    ]}
+                  >
+                    <List.Item.Meta
+                      avatar={<Avatar icon={<ThunderboltOutlined />} style={{ backgroundColor: '#faad14' }} />}
+                      title={automation.name}
+                      description={
+                        <Space direction="vertical" size="small">
+                          <Text type="secondary">Trigger: {automation.trigger}</Text>
+                          <Text type="secondary">Condition: {automation.condition}</Text>
+                          <Text type="secondary">Action: {automation.action}</Text>
+                          <Text type="secondary">Created: {automation.createdAt}</Text>
+                        </Space>
+                      }
+                    />
+                  </List.Item>
+                )}
+              />
+            </Card>
           </Col>
         );
       case 'structure':
@@ -1257,6 +2365,10 @@ const DivisionHead = () => {
                 <Text type="secondary">Created:</Text>
                 <Text>{currentBoard.createdAt}</Text>
               </Space>
+              <Space>
+                <Text type="secondary">Updated:</Text>
+                <Text>{currentBoard.updatedAt}</Text>
+              </Space>
             </Space>
           </Card>
         </Col>
@@ -1264,6 +2376,501 @@ const DivisionHead = () => {
         {/* Dynamic Board Components */}
         {selectedComponents.map(componentId => renderComponent(componentId))}
       </Row>
+
+      {/* Task Detail Modal */}
+      <Modal
+        title="Task Details"
+        open={isTaskDetailModalVisible}
+        onCancel={() => setIsTaskDetailModalVisible(false)}
+        width={800}
+        footer={[
+          <Button key="back" onClick={() => setIsTaskDetailModalVisible(false)}>
+            Close
+          </Button>,
+          <Button 
+            key="edit" 
+            type="primary" 
+            icon={<EditOutlined />}
+            onClick={() => {
+              setIsTaskDetailModalVisible(false);
+              setEditingTask(selectedTask);
+              taskForm.setFieldsValue({
+                title: selectedTask.title,
+                status: selectedTask.status,
+                priority: selectedTask.priority,
+                assignees: selectedTask.assignees,
+                team: selectedTask.team,
+                dueDate: selectedTask.dueDate,
+                startDate: selectedTask.startDate,
+                estimatedHours: selectedTask.estimatedHours,
+                description: selectedTask.description,
+                tags: selectedTask.tags
+              });
+              setIsTaskModalVisible(true);
+            }}
+          >
+            Edit Task
+          </Button>
+        ]}
+      >
+        {selectedTask && (
+          <div>
+            <Descriptions bordered size="small" column={2}>
+              <Descriptions.Item label="Task ID">TASK-{selectedTask.id}</Descriptions.Item>
+              <Descriptions.Item label="Status">
+                <Tag color={getStatusColor(selectedTask.status)}>{selectedTask.status}</Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label="Priority">
+                <Tag color={getPriorityColor(selectedTask.priority)}>{selectedTask.priority}</Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label="Team">{selectedTask.team}</Descriptions.Item>
+              <Descriptions.Item label="Due Date">{selectedTask.dueDate}</Descriptions.Item>
+              <Descriptions.Item label="Start Date">{selectedTask.startDate}</Descriptions.Item>
+              <Descriptions.Item label="Estimated Hours">{selectedTask.estimatedHours}h</Descriptions.Item>
+              <Descriptions.Item label="Actual Hours">{selectedTask.actualHours}h</Descriptions.Item>
+              <Descriptions.Item label="Created">{selectedTask.createdAt}</Descriptions.Item>
+              <Descriptions.Item label="Updated">{selectedTask.updatedAt}</Descriptions.Item>
+            </Descriptions>
+
+            <Divider orientation="left">Description</Divider>
+            <Text>{selectedTask.longDescription}</Text>
+
+            <Divider orientation="left">Checklist</Divider>
+            <List
+              size="small"
+              dataSource={selectedTask.checklist || []}
+              renderItem={item => (
+                <List.Item>
+                  <Checkbox checked={item.completed}>
+                    <Text style={{ 
+                      textDecoration: item.completed ? 'line-through' : 'none',
+                      color: item.completed ? '#999' : 'inherit'
+                    }}>
+                      {item.text}
+                    </Text>
+                  </Checkbox>
+                </List.Item>
+              )}
+            />
+
+            <Divider orientation="left">Sub-tasks</Divider>
+            <Table 
+              dataSource={selectedTask.subTasks || []}
+              columns={[
+                { title: 'Title', dataIndex: 'title' },
+                { 
+                  title: 'Status', 
+                  dataIndex: 'status',
+                  render: (status) => <Tag color={getStatusColor(status)}>{status}</Tag>
+                },
+                { title: 'Assignee', dataIndex: 'assignee' },
+                { title: 'Due Date', dataIndex: 'dueDate' },
+                { 
+                  title: 'Priority', 
+                  dataIndex: 'priority',
+                  render: (priority) => <Tag color={getPriorityColor(priority)}>{priority}</Tag>
+                }
+              ]}
+              size="small"
+              pagination={false}
+            />
+
+            <Divider orientation="left">Attachments</Divider>
+            <List
+              size="small"
+              dataSource={selectedTask.attachments || []}
+              renderItem={item => (
+                <List.Item>
+                  <Space>
+                    <PaperClipOutlined />
+                    <a href={item.url}>{item.name}</a>
+                    <Text type="secondary">({item.size})</Text>
+                  </Space>
+                </List.Item>
+              )}
+            />
+
+            <Divider orientation="left">Comments</Divider>
+            <List
+              size="small"
+              dataSource={selectedTask.comments || []}
+              renderItem={comment => (
+                <List.Item>
+                  <Space direction="vertical" size={0}>
+                    <Space>
+                      <Avatar size="small" icon={<UserOutlined />} />
+                      <Text strong>{comment.user}</Text>
+                      <Text type="secondary">{comment.timestamp}</Text>
+                    </Space>
+                    <Text style={{ marginLeft: 28 }}>{comment.text}</Text>
+                  </Space>
+                </List.Item>
+              )}
+            />
+          </div>
+        )}
+      </Modal>
+
+      {/* Create/Edit Task Modal */}
+      <Modal
+        title={editingTask ? "Edit Task" : "Create New Task"}
+        open={isTaskModalVisible}
+        onCancel={() => {
+          setIsTaskModalVisible(false);
+          setEditingTask(null);
+          taskForm.resetFields();
+        }}
+        footer={null}
+        width={600}
+      >
+        <Form
+          form={taskForm}
+          layout="vertical"
+          onFinish={editingTask ? handleUpdateTask : handleCreateTask}
+        >
+          <Form.Item name="title" label="Title" rules={[{ required: true }]}>
+            <Input placeholder="Enter title" />
+          </Form.Item>
+          <Form.Item name="status" label="Status" initialValue="todo">
+            <Select>
+              <Option value="todo">To Do</Option>
+              <Option value="in-progress">In Progress</Option>
+              <Option value="review">In Review</Option>
+              <Option value="completed">Completed</Option>
+              <Option value="blocked">Blocked</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="priority" label="Priority" initialValue="medium">
+            <Select>
+              <Option value="low">Low</Option>
+              <Option value="medium">Medium</Option>
+              <Option value="high">High</Option>
+              <Option value="urgent">Urgent</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="assignees" label="Assignees">
+            <Select mode="multiple">
+              <Option value="Emma Watson">Emma Watson</Option>
+              <Option value="James Chen">James Chen</Option>
+              <Option value="David Kim">David Kim</Option>
+              <Option value="Lisa Wang">Lisa Wang</Option>
+              <Option value="Michael Brown">Michael Brown</Option>
+              <Option value="Sarah Johnson">Sarah Johnson</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="team" label="Team">
+            <Select>
+              <Option value="Frontend">Frontend</Option>
+              <Option value="Backend">Backend</Option>
+              <Option value="DevOps">DevOps</Option>
+              <Option value="QA">QA</Option>
+            </Select>
+          </Form.Item>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item name="startDate" label="Start Date">
+                <Input type="date" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="dueDate" label="Due Date">
+                <Input type="date" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Form.Item name="estimatedHours" label="Estimated Hours">
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item name="description" label="Description">
+            <TextArea rows={4} placeholder="Enter description..." />
+          </Form.Item>
+          <Form.Item name="tags" label="Tags">
+            <Select mode="tags">
+              <Option value="UI/UX">UI/UX</Option>
+              <Option value="Backend">Backend</Option>
+              <Option value="Frontend">Frontend</Option>
+              <Option value="Bug">Bug</Option>
+              <Option value="Feature">Feature</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
+              <Button onClick={() => {
+                setIsTaskModalVisible(false);
+                setEditingTask(null);
+                taskForm.resetFields();
+              }}>
+                Cancel
+              </Button>
+              <Button type="primary" htmlType="submit">
+                {editingTask ? "Update" : "Create"}
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Checklist Management Modal */}
+      <Modal
+        title="Manage Checklist"
+        open={isChecklistModalVisible}
+        onCancel={() => {
+          setIsChecklistModalVisible(false);
+          setEditingChecklistItem(null);
+          checklistForm.resetFields();
+        }}
+        footer={null}
+        width={500}
+      >
+        {selectedTask && (
+          <div>
+            <Form
+              form={checklistForm}
+              layout="inline"
+              onFinish={editingChecklistItem ? handleUpdateChecklistItem : handleAddChecklistItem}
+              style={{ marginBottom: 16 }}
+            >
+              <Form.Item name="text" style={{ flex: 1 }}>
+                <Input placeholder="Checklist item" />
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  {editingChecklistItem ? "Update" : "Add"}
+                </Button>
+              </Form.Item>
+            </Form>
+
+            <List
+              dataSource={selectedTask.checklist || []}
+              renderItem={item => (
+                <List.Item
+                  actions={[
+                    <Button 
+                      type="text" 
+                      icon={<EditOutlined />} 
+                      size="small"
+                      onClick={() => {
+                        setEditingChecklistItem(item);
+                        checklistForm.setFieldsValue({ text: item.text });
+                      }}
+                    />,
+                    <Popconfirm
+                      title="Delete checklist item?"
+                      onConfirm={() => handleDeleteChecklistItem(item.id)}
+                    >
+                      <Button type="text" icon={<DeleteOutlined />} size="small" danger />
+                    </Popconfirm>
+                  ]}
+                >
+                  <Checkbox 
+                    checked={item.completed}
+                    onChange={() => handleToggleChecklistItem(selectedTask.id, item.id)}
+                  >
+                    <Text style={{ 
+                      textDecoration: item.completed ? 'line-through' : 'none',
+                      color: item.completed ? '#999' : 'inherit'
+                    }}>
+                      {item.text}
+                    </Text>
+                  </Checkbox>
+                </List.Item>
+              )}
+            />
+          </div>
+        )}
+      </Modal>
+
+      {/* Sub-task Management Modal */}
+      <Modal
+        title={editingSubTask ? "Edit Sub-task" : "Add Sub-task"}
+        open={isSubTaskModalVisible}
+        onCancel={() => {
+          setIsSubTaskModalVisible(false);
+          setEditingSubTask(null);
+          subTaskForm.resetFields();
+        }}
+        footer={null}
+      >
+        <Form
+          form={subTaskForm}
+          layout="vertical"
+          onFinish={editingSubTask ? handleUpdateSubTask : handleAddSubTask}
+        >
+          <Form.Item name="title" label="Title" rules={[{ required: true }]}>
+            <Input placeholder="Enter sub-task title" />
+          </Form.Item>
+          <Form.Item name="status" label="Status" initialValue="todo">
+            <Select>
+              <Option value="todo">To Do</Option>
+              <Option value="in-progress">In Progress</Option>
+              <Option value="completed">Completed</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="priority" label="Priority" initialValue="medium">
+            <Select>
+              <Option value="low">Low</Option>
+              <Option value="medium">Medium</Option>
+              <Option value="high">High</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="assignee" label="Assignee">
+            <Select>
+              <Option value="Emma Watson">Emma Watson</Option>
+              <Option value="James Chen">James Chen</Option>
+              <Option value="David Kim">David Kim</Option>
+              <Option value="Lisa Wang">Lisa Wang</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="dueDate" label="Due Date">
+            <Input type="date" />
+          </Form.Item>
+          <Form.Item>
+            <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
+              <Button onClick={() => {
+                setIsSubTaskModalVisible(false);
+                setEditingSubTask(null);
+                subTaskForm.resetFields();
+              }}>
+                Cancel
+              </Button>
+              <Button type="primary" htmlType="submit">
+                {editingSubTask ? "Update" : "Add"}
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Automation Modal */}
+      <Modal
+        title="Automation Rules"
+        open={isAutomationModalVisible}
+        onCancel={() => setIsAutomationModalVisible(false)}
+        width={600}
+        footer={[
+          <Button key="back" onClick={() => setIsAutomationModalVisible(false)}>
+            Close
+          </Button>,
+          <Button 
+            key="create" 
+            type="primary" 
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setIsAutomationModalVisible(false);
+              setSelectedAutomation(null);
+              automationForm.resetFields();
+              setIsAutomationEditModalVisible(true);
+            }}
+          >
+            New Automation
+          </Button>
+        ]}
+      >
+        <List
+          itemLayout="horizontal"
+          dataSource={automations}
+          renderItem={automation => (
+            <List.Item
+              actions={[
+                <Switch 
+                  checked={automation.active} 
+                  onChange={() => handleToggleAutomation(automation.id)}
+                />,
+                <Button 
+                  type="text" 
+                  icon={<EditOutlined />}
+                  onClick={() => {
+                    setIsAutomationModalVisible(false);
+                    setSelectedAutomation(automation);
+                    automationForm.setFieldsValue({
+                      name: automation.name,
+                      trigger: automation.trigger,
+                      condition: automation.condition,
+                      action: automation.action
+                    });
+                    setIsAutomationEditModalVisible(true);
+                  }}
+                />,
+                <Popconfirm
+                  title="Delete automation?"
+                  onConfirm={() => handleDeleteAutomation(automation.id)}
+                >
+                  <Button type="text" icon={<DeleteOutlined />} danger />
+                </Popconfirm>
+              ]}
+            >
+              <List.Item.Meta
+                avatar={<Avatar icon={<ThunderboltOutlined />} style={{ backgroundColor: '#faad14' }} />}
+                title={automation.name}
+                description={
+                  <div>
+                    <Tag>Trigger: {automation.trigger}</Tag>
+                    <Tag>Condition: {automation.condition}</Tag>
+                    <Tag>Action: {automation.action}</Tag>
+                    <div>Created: {automation.createdAt}</div>
+                  </div>
+                }
+              />
+            </List.Item>
+          )}
+        />
+      </Modal>
+
+      {/* Create/Edit Automation Modal */}
+      <Modal
+        title={selectedAutomation ? "Edit Automation" : "Create Automation"}
+        open={isAutomationEditModalVisible}
+        onCancel={() => {
+          setIsAutomationEditModalVisible(false);
+          setSelectedAutomation(null);
+          automationForm.resetFields();
+        }}
+        footer={null}
+      >
+        <Form
+          form={automationForm}
+          layout="vertical"
+          onFinish={selectedAutomation ? handleUpdateAutomation : handleCreateAutomation}
+        >
+          <Form.Item name="name" label="Automation Name" rules={[{ required: true }]}>
+            <Input placeholder="e.g., Notify on High Priority" />
+          </Form.Item>
+          <Form.Item name="trigger" label="Trigger" rules={[{ required: true }]}>
+            <Select>
+              <Option value="task.created">Task Created</Option>
+              <Option value="status.changed">Status Changed</Option>
+              <Option value="due.date.approaching">Due Date Approaching</Option>
+              <Option value="task.assigned">Task Assigned</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="condition" label="Condition" rules={[{ required: true }]}>
+            <Input placeholder="e.g., priority = high" />
+          </Form.Item>
+          <Form.Item name="action" label="Action" rules={[{ required: true }]}>
+            <Select>
+              <Option value="notify.manager">Notify Manager</Option>
+              <Option value="notify.assignee">Notify Assignee</Option>
+              <Option value="move.to.done">Move to Done</Option>
+              <Option value="send.reminder">Send Reminder</Option>
+              <Option value="create.subtask">Create Sub-task</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
+              <Button onClick={() => {
+                setIsAutomationEditModalVisible(false);
+                setSelectedAutomation(null);
+                automationForm.resetFields();
+              }}>
+                Cancel
+              </Button>
+              <Button type="primary" htmlType="submit">
+                {selectedAutomation ? "Update" : "Create"}
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
 
       {/* Create Board Modal */}
       <Modal
@@ -1443,7 +3050,13 @@ const DivisionHead = () => {
                   onClick={() => handleLoadTemplate(template)}
                 >
                   Use Template
-                </Button>
+                </Button>,
+                <Popconfirm
+                  title="Delete template?"
+                  onConfirm={() => handleDeleteTemplate(template.id)}
+                >
+                  <Button type="text" icon={<DeleteOutlined />} size="small" danger />
+                </Popconfirm>
               ]}
             >
               <List.Item.Meta
@@ -1460,6 +3073,9 @@ const DivisionHead = () => {
                       <Text type="secondary" style={{ fontSize: 12 }}>
                         Components: {template.components.length} items
                       </Text>
+                    </div>
+                    <div>
+                      <Text type="secondary">Created: {template.createdAt}</Text>
                     </div>
                   </div>
                 }
@@ -1516,58 +3132,6 @@ const DivisionHead = () => {
         </Form>
       </Modal>
 
-      {/* Create Task/OKR Modal */}
-      <Modal
-        title="Create New Task/OKR"
-        open={isTaskModalVisible}
-        onCancel={() => setIsTaskModalVisible(false)}
-        footer={null}
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={(values) => {
-            message.success('Task created successfully');
-            setIsTaskModalVisible(false);
-          }}
-        >
-          <Form.Item name="title" label="Title" rules={[{ required: true }]}>
-            <Input placeholder="Enter title" />
-          </Form.Item>
-          <Form.Item name="type" label="Type" rules={[{ required: true }]}>
-            <Select>
-              <Option value="task">Task</Option>
-              <Option value="okr">OKR</Option>
-              <Option value="project">Project</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item name="assignee" label="Assign To">
-            <Select>
-              <Option value="emma">Emma Watson</Option>
-              <Option value="james">James Chen</Option>
-              <Option value="david">David Kim</Option>
-              <Option value="lisa">Lisa Wang</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item name="priority" label="Priority">
-            <Select>
-              <Option value="high">High</Option>
-              <Option value="medium">Medium</Option>
-              <Option value="low">Low</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item name="deadline" label="Deadline">
-            <Input type="date" />
-          </Form.Item>
-          <Form.Item>
-            <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
-              <Button onClick={() => setIsTaskModalVisible(false)}>Cancel</Button>
-              <Button type="primary" htmlType="submit">Create</Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      </Modal>
-
       {/* Assign Task Modal */}
       <Modal
         title="Assign Task"
@@ -1582,17 +3146,17 @@ const DivisionHead = () => {
         >
           <Form.Item name="task" label="Select Task" rules={[{ required: true }]}>
             <Select>
-              <Option value="task1">Implement login page</Option>
-              <Option value="task2">API rate limiting</Option>
-              <Option value="task3">Database indexing</Option>
+              {tasks.map(task => (
+                <Option key={task.id} value={task.id}>{task.title}</Option>
+              ))}
             </Select>
           </Form.Item>
           <Form.Item name="assignee" label="Assign To" rules={[{ required: true }]}>
             <Select>
-              <Option value="emma">Emma Watson</Option>
-              <Option value="james">James Chen</Option>
-              <Option value="david">David Kim</Option>
-              <Option value="lisa">Lisa Wang</Option>
+              <Option value="Emma Watson">Emma Watson</Option>
+              <Option value="James Chen">James Chen</Option>
+              <Option value="David Kim">David Kim</Option>
+              <Option value="Lisa Wang">Lisa Wang</Option>
             </Select>
           </Form.Item>
           <Form.Item name="dueDate" label="Due Date">
